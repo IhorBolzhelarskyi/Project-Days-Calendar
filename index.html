@@ -1,8 +1,33 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <script type="module" src="common.mjs"></script>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Days Calendar Project</title>
     <script type="module" src="web.mjs"></script>
-  </head>
-  <body></body>
+</head>
+<body>
+    <h1>Days Calendar</h1>
+
+    <!-- Month navigation -->
+    <div>
+        <button id="prev-month">Previous Month</button>
+        <button id="next-month">Next Month</button>
+    </div>
+
+    <!-- Jump to specific month/year -->
+    <div>
+        <label for="month-select">Month:</label>
+        <select id="month-select"></select>
+
+        <label for="year-select">Year:</label>
+        <select id="year-select"></select>
+    </div>
+
+    <!-- Calendar container -->
+    <div id="calendar-container">
+        <!-- Placeholder for calendar days -->
+    </div>
+
+    <div id="event-description"></div>
+</body>
 </html>
