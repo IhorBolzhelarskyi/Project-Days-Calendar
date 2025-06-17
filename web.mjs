@@ -3,19 +3,22 @@
 // Note that when running locally, in order to open a web page which uses modules, you must serve the directory over HTTP e.g. with https://www.npmjs.com/package/http-server
 // You can't open the index.html file using a file:// URL.
 
-import { getGreeting } from "./common.mjs";
-import daysData from "./days.json" with { type: "json" };
-
-window.onload = function() {
-    document.querySelector("body").innerText = `${getGreeting()} - there are ${daysData.length} known days`;
-}
-
-
 import {
+  getGreeting,
   loadCommemorativeDays,
   calculateCommemorativeDate,
   getDateInAString
 } from "./common.mjs";
+
+import daysData from "./days.json" with { type: "json" };
+
+window.onload = function () {
+  document.querySelector("body").innerText = `${getGreeting()} - there are ${daysData.length} known days`;
+
+  // Example: render current month
+  const today = new Date();
+  renderCalendar(today.getFullYear(), today.getMonth() + 1);
+};
 
 const calendarContainer = document.getElementById("calendar-container");
 
@@ -23,7 +26,7 @@ const calendarContainer = document.getElementById("calendar-container");
 export async function renderCalendar(year, month) {
   calendarContainer.innerHTML = "";
 
-  const daysInMonth = new Date(year, month, 0).getDate(); // Note: month is 1-based
+  const daysInMonth = new Date(year, month, 0).getDate(); // month is 1-based
 
   for (let day = 1; day <= daysInMonth; day++) {
     const cell = document.createElement("div");
@@ -32,13 +35,12 @@ export async function renderCalendar(year, month) {
     const dateObj = new Date(year, month - 1, day); // JS months are 0-based
     const dateString = getDateInAString(dateObj);
 
-    cell.dataset.date = dateString;         // 👈 This is required for lookup
+    cell.dataset.date = dateString;
     cell.textContent = day;
 
     calendarContainer.appendChild(cell);
   }
 
-  // ✅ Show commemorative day labels after grid is built
   await displayCommemorativeDays(year, month);
 }
 
@@ -63,4 +65,3 @@ async function displayCommemorativeDays(year, month) {
     }
   });
 }
-
