@@ -3,3 +3,12 @@
 export function getGreeting() {
   return "Hello";
 }
+
+export async function loadCommemorativeDays() {
+  const res = await fetch("days.json");
+  if (!res.ok) {
+    throw new Error("Failed to load commemorative days");
+  }
+  const data = await res.json();
+  return data;
+}

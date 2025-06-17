@@ -10,3 +10,16 @@ window.onload = function() {
     document.querySelector("body").innerText = `${getGreeting()} - there are ${daysData.length} known days`;
 }
 
+import { loadCommemorativeDays } from "./common.mjs";
+
+let commemorativeDays = [];
+
+loadCommemorativeDays()
+  .then((data) => {
+    commemorativeDays = data;
+    console.log("✅ Loaded commemorative days:", commemorativeDays);
+    // Later you can pass this to your calendar renderer
+  })
+  .catch((err) => {
+    console.error("❌ Failed to load days.json", err);
+  });
