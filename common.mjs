@@ -4,6 +4,7 @@ export function getGreeting() {
   return "Hello";
 }
 
+feature/calculate-commemorative-dates
 /**
  * Calculates the actual date for rules like "2nd Tuesday of October"
  * @param {number} year - e.g. 2025
@@ -39,4 +40,13 @@ export function calculateCommemorativeDate(year, rule) {
   }
 
   return null; // if not found
+
+export async function loadCommemorativeDays() {
+  const res = await fetch("days.json");
+  if (!res.ok) {
+    throw new Error("Failed to load commemorative days");
+  }
+  const data = await res.json();
+  return data;
+main
 }
