@@ -3,3 +3,40 @@
 export function getGreeting() {
   return "Hello";
 }
+
+/**
+ * Calculates the actual date for rules like "2nd Tuesday of October"
+ * @param {number} year - e.g. 2025
+ * @param {object} rule - { month, weekday, occurrence } (1-based month, 0=Sunday)
+ * @returns {string} date in "YYYY-MM-DD"
+ */
+export function calculateCommemorativeDate(year, rule) {
+  const { month, weekday, occurrence, day } = rule;
+
+  // If it's a fixed date (e.g., June 5), just return it
+  if (day !== undefined) {
+    const fixed = new Date(year, month - 1, day);
+    return getDateInAString(fixed);
+  }
+
+  // Find the first day of the month
+  const firstDay = new Date(year, month - 1, 1);
+  let date = 1;
+
+  // Count how many matching weekdays we pass
+  let count = 0;
+
+  while (true) {
+    const current = new Date(year, month - 1, date);
+    if (current.getMonth() !== month - 1) break; // next month
+    if (current.getDay() === weekday) {
+      count++;
+      if (count === occurrence) {
+        return getDateInAString(current);
+      }
+    }
+    date++;
+  }
+
+  return null; // if not found
+}
