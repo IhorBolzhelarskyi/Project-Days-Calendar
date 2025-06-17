@@ -10,3 +10,57 @@ window.onload = function() {
     document.querySelector("body").innerText = `${getGreeting()} - there are ${daysData.length} known days`;
 }
 
+
+import {
+  loadCommemorativeDays,
+  calculateCommemorativeDate,
+  getDateInAString
+} from "./common.mjs";
+
+const calendarContainer = document.getElementById("calendar-container");
+
+// Render the calendar grid for a specific year and month
+export async function renderCalendar(year, month) {
+  calendarContainer.innerHTML = "";
+
+  const daysInMonth = new Date(year, month, 0).getDate(); // Note: month is 1-based
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const cell = document.createElement("div");
+    cell.classList.add("day-cell");
+
+    const dateObj = new Date(year, month - 1, day); // JS months are 0-based
+    const dateString = getDateInAString(dateObj);
+
+    cell.dataset.date = dateString;         // 👈 This is required for lookup
+    cell.textContent = day;
+
+    calendarContainer.appendChild(cell);
+  }
+
+  // ✅ Show commemorative day labels after grid is built
+  await displayCommemorativeDays(year, month);
+}
+
+// Load, calculate, and display commemorative day names
+async function displayCommemorativeDays(year, month) {
+  const days = await loadCommemorativeDays();
+
+  days.forEach((day) => {
+    const targetDate = calculateCommemorativeDate(year, day);
+    if (!targetDate) return;
+
+    const [targetYear, targetMonth] = targetDate.split("-").map(Number);
+
+    if (targetYear !== year || targetMonth !== month) return;
+
+    const cell = document.querySelector(`[data-date="${targetDate}"]`);
+    if (cell) {
+      const label = document.createElement("span");
+      label.classList.add("commemorative-label");
+      label.textContent = day.name;
+      cell.appendChild(label);
+    }
+  });
+}
+
