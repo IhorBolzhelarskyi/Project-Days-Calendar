@@ -13,6 +13,17 @@ import { calculateCommemorativeDate } from "./common.mjs";
  */
 const daysData = JSON.parse(fs.readFileSync("./days.json", "utf-8"));
 
+//  Fetches full text description from a given URL
+async function fetchDescription(url) {
+  try {
+    const res = await fetch(url);
+    return res.ok ? await res.text() : "Description not available.";
+  } catch (err) {
+    console.error(`Error fetching ${url}:`, err);
+    return "Description not available.";
+  }
+}
+
 // Main function that generates an iCalendar file covering years 2020–2030
 async function generateICal() {
   const events = [];
