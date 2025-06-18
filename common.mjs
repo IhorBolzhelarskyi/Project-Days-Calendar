@@ -1,10 +1,14 @@
 // This is a placeholder file which shows how you can define functions which can be used from both a browser script and a node script. You can delete the contents of the file once you have understood how it works.
 
-export function getGreeting() {
-  return "Hello";
+// convert new Date() object to string format
+export function getDateInAString(date) {
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
-feature/calculate-commemorative-dates
+// feature / calculate - commemorative - dates;
 /**
  * Calculates the actual date for rules like "2nd Tuesday of October"
  * @param {number} year - e.g. 2025
@@ -40,7 +44,7 @@ export function calculateCommemorativeDate(year, rule) {
   }
 
   return null; // if not found
-
+}
 export async function loadCommemorativeDays() {
   const res = await fetch("days.json");
   if (!res.ok) {
@@ -48,5 +52,4 @@ export async function loadCommemorativeDays() {
   }
   const data = await res.json();
   return data;
-main
 }
