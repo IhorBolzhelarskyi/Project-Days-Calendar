@@ -1,10 +1,5 @@
-import { getGreeting } from "./common.mjs";
 import assert from "node:assert";
 import test from "node:test";
-
-test("Greeting is correct", () => {
-  assert.equal(getGreeting(), "Hello");
-});
 
 import { calculateCommemorativeDate } from "./common.mjs";
 
@@ -21,8 +16,8 @@ assertEqual(
   calculateCommemorativeDate(2025, {
     name: "Ada Lovelace Day",
     month: 10,
-    weekday: 2,       // 0 = Sunday, 1 = Monday, 2 = Tuesday...
-    occurrence: 2
+    weekday: 2, // 0 = Sunday, 1 = Monday, 2 = Tuesday...
+    occurrence: 2,
   }),
   "2025-10-14",
   "Ada Lovelace Day 2025 should be 2025-10-14"
@@ -33,7 +28,7 @@ assertEqual(
   calculateCommemorativeDate(2025, {
     name: "World Environment Day",
     month: 6,
-    day: 5
+    day: 5,
   }),
   "2025-06-05",
   "World Environment Day 2025 should be 2025-06-05"
