@@ -53,3 +53,14 @@ export async function loadCommemorativeDays() {
   const data = await res.json();
   return data;
 }
+
+//  Fetches full text description from a given URL
+export async function fetchDescription(url) {
+  try {
+    const res = await fetch(url);
+    return res.ok ? await res.text() : "Description not available.";
+  } catch (err) {
+    console.error(`Error fetching ${url}:`, err);
+    return "Description not available.";
+  }
+}

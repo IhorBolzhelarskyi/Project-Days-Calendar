@@ -2,9 +2,8 @@ import {
   loadCommemorativeDays,
   calculateCommemorativeDate,
   getDateInAString,
-  fetchDescriptionText
+  fetchDescription
 } from "./common.mjs";
-
 import daysData from "./days.json" with { type: "json" };
 
 // DOM elements
@@ -89,10 +88,15 @@ async function showCalendar(year, month) {
 
 // Loads and highlight commemorative days
 async function displayCommemorativeDays(year, month) {
-  const days = await loadCommemorativeDays();
+  const days = await loadCommemorativeDays(); 
 
   for (const day of days) {
-    const targetDate = calculateCommemorativeDate(year, day);
+        const rule = {
+      month: monthNames.indexOf(day.monthName) + 1, 
+      weekday: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].indexOf(day.dayName),
+      occurrence: { first: 1, second: 2, third: 3, fourth: 4, last: 5 }[day.occurence]
+    };
+    const targetDate = calculateCommemorativeDate(year, rule);
     if (!targetDate) continue;
 
     const [y, m] = targetDate.split("-").map(Number);
@@ -106,13 +110,13 @@ async function displayCommemorativeDays(year, month) {
       cell.appendChild(label);
 
       cell.classList.add("clickable");
-
+      cell.style.cursor =`pointer`;
       // Shows modal on click
       cell.addEventListener("click", async () => {
         modalTitle.textContent = day.name;
         modalText.textContent = "Loading...";
 
-        const text = await fetchDescriptionText(day.descriptionURL);
+        const text = await fetchDescription(day.descriptionURL);
         modalText.textContent = text;
         modal.showModal();
       });
@@ -153,3 +157,7 @@ document.addEventListener("keydown", (e) => {
     modal.close();
   }
 });
+
+modalClose.addEventListener(`click`,()=>{
+  modal.close();
+})
