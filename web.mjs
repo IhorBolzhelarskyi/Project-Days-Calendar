@@ -147,6 +147,9 @@ yearSelect.onchange = () => {
   showCalendar(currentYear, currentMonth);
 };
 
-modalClose.onclick = () => {
-  modal.close();
-};
+// Modal close button
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && modal.open) {
+    modal.close();
+  }
+});
