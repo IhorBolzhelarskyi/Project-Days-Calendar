@@ -48,7 +48,7 @@ window.onload = () => {
   showCalendar(currentYear, currentMonth);
 };
 
-let lastFocusedCell = null; // 🔧 Track last focused cell
+let lastFocusedCell = null; //Track last focused cell
 
 async function showCalendar(year, month) {
   calendarDiv.innerHTML = "";
@@ -57,9 +57,9 @@ async function showCalendar(year, month) {
   yearSelect.value = year;
 
   const table = document.createElement("table");
-  table.setAttribute("role", "grid"); // 🔧 Accessibility improvement
+  table.setAttribute("role", "grid"); // Accessibility improvement
 
-  const caption = document.createElement("caption"); // 🔧 Calendar caption
+  const caption = document.createElement("caption"); // Calendar caption
   caption.textContent = `${monthNames[month]} ${year} Calendar`;
   caption.id = "calendar-caption";
   table.appendChild(caption);
@@ -79,15 +79,22 @@ async function showCalendar(year, month) {
     const row = table.insertRow();
     for (let i = 0; i < 7; i++) {
       const cell = row.insertCell();
-      cell.setAttribute("role", "gridcell"); // 🔧 Accessibility fix
+
+      cell.classList.add("calendar-day"); // Add class for styling
+      cell.setAttribute("role", "gridcell"); // Accessibility fix
+
       if ((day === 1 && i < start) || day > daysInMonth) {
         cell.textContent = "";
       } else {
         const dateObj = new Date(year, month, day);
-        const dateString = getDateInAString(dateObj);
-        cell.textContent = day;
-        cell.dataset.date = dateString;
-        cell.tabIndex = 0;
+
+        const dateString = getDateInAString(dateObj); // Format: YYYY-MM-DD
+
+        cell.textContent = day; // Display the day number
+        cell.dataset.date = dateString; // Store the date on the cell
+        cell.tabIndex = 0; // Make it keyboard focusable
+        cell.setAttribute("role", "button"); // Make screen readers treat it as a button
+        cell.setAttribute("aria-label", `Day ${day} of ${monthNames[month]} ${year}`);
         day++;
       }
     }
@@ -128,29 +135,29 @@ async function displayCommemorativeDays(year, month) {
 
       cell.classList.add("clickable");
       cell.style.cursor = `pointer`;
-      cell.setAttribute("role", "button"); // 🔧
-      cell.setAttribute("aria-label", `${day.name} on ${targetDate}`); // 🔧
+      cell.setAttribute("role", "button"); 
+      cell.setAttribute("aria-label", `${day.name} on ${targetDate}`); 
 
       cell.addEventListener("click", async () => {
-        lastFocusedCell = cell; // 🔧
+        lastFocusedCell = cell; 
         modalTitle.textContent = day.name;
         modalText.textContent = "Loading...";
         const text = await fetchDescription(day.descriptionURL);
         modalText.textContent = text;
         modal.showModal();
-        modalClose.focus(); // 🔧
+        modalClose.focus(); 
       });
 
       cell.addEventListener("keydown", async (e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          lastFocusedCell = cell; // 🔧
+          lastFocusedCell = cell; 
           modalTitle.textContent = day.name;
           modalText.textContent = "Loading...";
           const text = await fetchDescription(day.descriptionURL);
           modalText.textContent = text;
           modal.showModal();
-          modalClose.focus(); // 🔧
+          modalClose.focus(); 
         }
       });
     }
@@ -188,13 +195,13 @@ yearSelect.onchange = () => {
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && modal.open) {
     modal.close();
-    if (lastFocusedCell) lastFocusedCell.focus(); // 🔧
+    if (lastFocusedCell) lastFocusedCell.focus();
   }
 });
 
 modalClose.addEventListener("click", () => {
   modal.close();
-  if (lastFocusedCell) lastFocusedCell.focus(); // 🔧
+  if (lastFocusedCell) lastFocusedCell.focus(); 
 });
 
 // Styling and accessibility
@@ -214,6 +221,17 @@ style.innerHTML = `
     margin-top: 2px;
     line-height: 1.1;
   }
+
+
+  td.calendar-day {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 8px;
+  }
+
+  td.clickable {
+    background-color: #f9f9f9;
+    }
 
   html {
     font-size: 100%;
