@@ -161,3 +161,14 @@ document.addEventListener("keydown", (e) => {
 modalClose.addEventListener(`click`,()=>{
   modal.close();
 })
+
+const style = document.createElement("style");
+style.innerHTML = `
+  [tabindex]:focus-visible,
+  button:focus-visible,
+  select:focus-visible {
+    outline: 2px solid black;
+    outline-offset: 2px;
+  }
+`;
+document.head.appendChild(style);
