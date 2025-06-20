@@ -37,7 +37,7 @@ monthNames.forEach((name, i) => {
   monthSelect.appendChild(option);
 });
 
-for (let y = 2000; y <= 2030; y++) {
+for (let y = 1900; y <= 2050; y++) {
   const option = document.createElement("option");
   option.value = y;
   option.textContent = y;
@@ -111,12 +111,13 @@ async function displayCommemorativeDays(year, month) {
   const days = await loadCommemorativeDays();
 
   for (const day of days) {
-    const rule = {
-      month: monthNames.indexOf(day.monthName) + 1,
-      weekday: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].indexOf(day.dayName),
-      occurrence: { first: 1, second: 2, third: 3, fourth: 4, last: 5 }[day.occurence]
-    };
+  const occurrenceMap = { first: 1, second: 2, third: 3, fourth: 4, last: 5 };
 
+  const rule = {
+    month: monthNames.indexOf(day.monthName) + 1,
+    weekday: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].indexOf(day.dayName),
+    occurrence: occurrenceMap[day.occurence]  
+  };
     const targetDate = calculateCommemorativeDate(year, rule);
     if (!targetDate) continue;
 
