@@ -2,44 +2,44 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Days Calendar Project</title>
-    <script type="module" src="web.mjs"></script>
-
-    <!-- For accessibility purpose -->
+    <meta name="description" content="A calendar that displays commemorative days dynamically using smart date rules." />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Days Calendar Project</title>
     <style>
-  button:focus,
-  .clickable:focus {
-    outline: 3px solid #000000;
-    outline-offset: 2px;
-  }
-  </style>
-
+      button:focus,
+      .clickable:focus {
+        outline: 3px solid #000000;
+        outline-offset: 2px;
+      }
+    </style>
   </head>
+
   <body>
-    <h1 id="calendarHeading">Days Calendar</h1>
+    <main>
+      <h1 id="calendarHeading">Days Calendar</h1>
 
-    <!-- Month navigation -->
-    <div>
-      <button id="prev-month" aria-label="Go to previous month">Previous Month</button>
-      <button id="next-month" aria-label="Go to next month">Next Month</button>
-    </div>
+      <!-- Month navigation -->
+      <div>
+        <button id="prev-month" aria-label="Go to previous month">Previous Month</button>
+        <button id="next-month" aria-label="Go to next month">Next Month</button>
+      </div>
 
-    <!-- Jumps to specific month/year -->
-    <div>
-      <label for="month-select">Month:</label>
-      <select id="month-select" name="month"></select>
+      <!-- Jumps to specific month/year -->
+      <div>
+        <label for="month-select" id="monthLabel">Month:</label>
+        <select id="month-select" name="month" aria-labelledby="monthLabel"></select>
 
-      <label for="year-select">Year:</label>
-      <select id="year-select" name="year"></select>
-    </div>
+        <label for="year-select" id="yearLabel">Year:</label>
+        <select id="year-select" name="year" aria-labelledby="yearLabel"></select>
+      </div>
 
-    <!-- Calendar container with ARIA -->
-    <div id="calendar-container" role="region" aria-labelledby="calendarHeading">
-      <!-- Placeholder for calendar days -->
-    </div>
+      <!-- Calendar container with ARIA -->
+      <div id="calendar-container" role="region" aria-labelledby="calendarHeading">
+        <!-- Placeholder for calendar days -->
+      </div>
 
-    <div id="event-description" hidden></div>
+      <div id="event-description" hidden></div>
+    </main>
 
     <!-- Accessible modal -->
     <dialog 
@@ -53,6 +53,7 @@
       <p id="modalText">Modal text</p>
       <button id="modalClose" aria-label="Close description modal">Close</button>
     </dialog>
+
+    <script type="module" src="web.mjs"></script>
   </body>
 </html>
-

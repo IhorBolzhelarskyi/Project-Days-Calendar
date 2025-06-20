@@ -6,7 +6,7 @@ import {
   fetchDescription
 } from "./common.mjs";
 
-// Import JSON data for commemorative days
+// Import JSON data
 import daysData from "./days.json" with { type: "json" };
 
 // DOM Elements
@@ -20,15 +20,13 @@ const modalTitle = document.getElementById("modalTitle");
 const modalText = document.getElementById("modalText");
 const modalClose = document.getElementById("modalClose");
 
-// Month list
 const monthNames = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
 ];
 
-
 let today = new Date();
-let currentMonth = today.getMonth(); // 0-based index (0 = Jan)
+let currentMonth = today.getMonth();
 let currentYear = today.getFullYear();
 
 // Populate dropdowns
@@ -46,62 +44,61 @@ for (let y = 2000; y <= 2030; y++) {
   yearSelect.appendChild(option);
 }
 
-// Shows the current month and year on load
 window.onload = () => {
   showCalendar(currentYear, currentMonth);
 };
 
-// Renders the calendar grid with commemorative days
-async function showCalendar(year, month) {
-  calendarDiv.innerHTML = ""; // Clears old calendar
+let lastFocusedCell = null; // 🔧 Track last focused cell
 
-  // Set the dropdowns to current values
+async function showCalendar(year, month) {
+  calendarDiv.innerHTML = "";
+
   monthSelect.value = month;
   yearSelect.value = year;
 
   const table = document.createElement("table");
+  table.setAttribute("role", "grid"); // 🔧 Accessibility improvement
 
-  // Create a header row with the day names
-  table.innerHTML = "<tr>" + ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]
-    .map(day => `<th>${day}</th>`).join("") + "</tr>";
+  const caption = document.createElement("caption"); // 🔧 Calendar caption
+  caption.textContent = `${monthNames[month]} ${year} Calendar`;
+  caption.id = "calendar-caption";
+  table.appendChild(caption);
+  table.setAttribute("aria-labelledby", "calendar-caption");
 
-  // Get first day of the month (e.g., 1st October)
+  table.innerHTML += "<tr>" + ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    .map(day => `<th scope="col">${day}</th>`).join("") + "</tr>";
+
   const firstDay = new Date(year, month, 1);
-  let start = firstDay.getDay() - 1; // Adjust because JS starts week on Sunday
-  if (start === -1) start = 6; // If it's Sunday, move to end of week
+  let start = firstDay.getDay() - 1;
+  if (start === -1) start = 6;
 
-  const daysInMonth = new Date(year, month + 1, 0).getDate(); // Total days in that month
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
   let day = 1;
 
-  // Create rows of calendar (7 columns per row)
   while (day <= daysInMonth) {
     const row = table.insertRow();
     for (let i = 0; i < 7; i++) {
       const cell = row.insertCell();
+      cell.setAttribute("role", "gridcell"); // 🔧 Accessibility fix
       if ((day === 1 && i < start) || day > daysInMonth) {
-        cell.textContent = ""; // Empty cell for padding before/after month
+        cell.textContent = "";
       } else {
         const dateObj = new Date(year, month, day);
-        const dateString = getDateInAString(dateObj); // Format: YYYY-MM-DD
-
-        cell.textContent = day; // Display the day number
-        cell.dataset.date = dateString; // Store the date on the cell
-        cell.tabIndex = 0; // Make it keyboard focusable
+        const dateString = getDateInAString(dateObj);
+        cell.textContent = day;
+        cell.dataset.date = dateString;
+        cell.tabIndex = 0;
         day++;
       }
     }
   }
 
-  // Add the table to the page
   calendarDiv.appendChild(table);
-
-  // Add labels and click events for commemorative days
-  await displayCommemorativeDays(year, month + 1); // Add 1 to match human-readable month
+  await displayCommemorativeDays(year, month + 1);
 }
 
-// --- Add commemorative day labels and modal popup --- //
 async function displayCommemorativeDays(year, month) {
-  const days = await loadCommemorativeDays(); // Get days from file/API
+  const days = await loadCommemorativeDays();
 
   for (const day of days) {
     const rule = {
@@ -110,41 +107,53 @@ async function displayCommemorativeDays(year, month) {
       occurrence: { first: 1, second: 2, third: 3, fourth: 4, last: 5 }[day.occurence]
     };
 
-    const targetDate = calculateCommemorativeDate(year, rule); // Get actual date like 2025-10-31
+    const targetDate = calculateCommemorativeDate(year, rule);
     if (!targetDate) continue;
 
     const [y, m] = targetDate.split("-").map(Number);
-    if (y !== year || m !== month) continue; // Skip if it's not this month
+    if (y !== year || m !== month) continue;
 
     const cell = document.querySelector(`[data-date="${targetDate}"]`);
     if (cell) {
-      // Add line break before label
       cell.appendChild(document.createElement("br"));
 
-      // Create the commemorative label
       const label = document.createElement("span");
       label.classList.add("commemorative-label");
       label.textContent = day.name;
       cell.appendChild(label);
 
-      // Make the cell interactive
       cell.classList.add("clickable");
       cell.style.cursor = `pointer`;
+      cell.setAttribute("role", "button"); // 🔧
+      cell.setAttribute("aria-label", `${day.name} on ${targetDate}`); // 🔧
 
-      // Show popup with description when clicked
       cell.addEventListener("click", async () => {
+        lastFocusedCell = cell; // 🔧
         modalTitle.textContent = day.name;
         modalText.textContent = "Loading...";
-
         const text = await fetchDescription(day.descriptionURL);
         modalText.textContent = text;
         modal.showModal();
+        modalClose.focus(); // 🔧
+      });
+
+      cell.addEventListener("keydown", async (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          lastFocusedCell = cell; // 🔧
+          modalTitle.textContent = day.name;
+          modalText.textContent = "Loading...";
+          const text = await fetchDescription(day.descriptionURL);
+          modalText.textContent = text;
+          modal.showModal();
+          modalClose.focus(); // 🔧
+        }
       });
     }
   }
 }
 
-// Navigation buttons
+// Navigation
 prevBtn.onclick = () => {
   if (--currentMonth < 0) {
     currentMonth = 11;
@@ -161,7 +170,6 @@ nextBtn.onclick = () => {
   showCalendar(currentYear, currentMonth);
 };
 
-// Dropdown change handlers
 monthSelect.onchange = () => {
   currentMonth = +monthSelect.value;
   showCalendar(currentYear, currentMonth);
@@ -172,18 +180,39 @@ yearSelect.onchange = () => {
   showCalendar(currentYear, currentMonth);
 };
 
-//  Modal close button
+// ESC closes modal and returns focus
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && modal.open) {
     modal.close();
+    if (lastFocusedCell) lastFocusedCell.focus(); // 🔧
   }
 });
 
-modalClose.addEventListener(`click`, () => {
+modalClose.addEventListener("click", () => {
   modal.close();
+  if (lastFocusedCell) lastFocusedCell.focus(); // 🔧
 });
 
-// Styling and accesibility
+// 🔧 Trap focus inside modal
+modal.addEventListener("keydown", (e) => {
+  const focusable = modal.querySelectorAll(
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+  );
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+
+  if (e.key === "Tab") {
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+});
+
+// 🔧 Inject styles
 const style = document.createElement("style");
 style.innerHTML = `
   [tabindex]:focus-visible,
@@ -199,6 +228,17 @@ style.innerHTML = `
     display: block;
     margin-top: 2px;
     line-height: 1.1;
+  }
+
+  html {
+    font-size: 100%;
+    color-scheme: light dark;
+  }
+
+  body {
+    font-family: system-ui, sans-serif;
+    color: #000;
+    background-color: #fff;
   }
 `;
 document.head.appendChild(style);
