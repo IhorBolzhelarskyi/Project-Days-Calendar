@@ -26,7 +26,6 @@ const monthNames = [
   "July", "August", "September", "October", "November", "December"
 ];
 
-
 let today = new Date();
 let currentMonth = today.getMonth(); // 0-based index (0 = Jan)
 let currentYear = today.getFullYear();
@@ -78,6 +77,8 @@ async function showCalendar(year, month) {
     const row = table.insertRow();
     for (let i = 0; i < 7; i++) {
       const cell = row.insertCell();
+      cell.classList.add("calendar-day"); // Add class for styling
+
       if ((day === 1 && i < start) || day > daysInMonth) {
         cell.textContent = ""; // Empty cell for padding before/after month
       } else {
@@ -87,6 +88,8 @@ async function showCalendar(year, month) {
         cell.textContent = day; // Display the day number
         cell.dataset.date = dateString; // Store the date on the cell
         cell.tabIndex = 0; // Make it keyboard focusable
+        cell.setAttribute("role", "button"); // Make screen readers treat it as a button
+        cell.setAttribute("aria-label", `Day ${day} of ${monthNames[month]} ${year}`);
         day++;
       }
     }
@@ -199,6 +202,16 @@ style.innerHTML = `
     display: block;
     margin-top: 2px;
     line-height: 1.1;
+  }
+
+  td.calendar-day {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 8px;
+  }
+
+  td.clickable {
+    background-color: #f9f9f9;
   }
 `;
 document.head.appendChild(style);
