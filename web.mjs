@@ -96,10 +96,10 @@ async function showCalendar(year, month) {
   calendarDiv.appendChild(table);
 
   // Add labels and click events for commemorative days
-  await displayCommemorativeDays(year, month + 1); // Add 1 to match human-readable month
+  await displayCommemorativeDays(year, month + 1); // month + 1 because it's 0-based in JS
 }
 
-// --- Add commemorative day labels and modal popup --- //
+// Add commemorative day labels and modal popup
 async function displayCommemorativeDays(year, month) {
   const days = await loadCommemorativeDays(); // Get days from file/API
 
@@ -118,7 +118,7 @@ async function displayCommemorativeDays(year, month) {
 
     const cell = document.querySelector(`[data-date="${targetDate}"]`);
     if (cell) {
-      // ✅ Add line break before label
+      // Add line break before label
       cell.appendChild(document.createElement("br"));
 
       // Create the commemorative label
@@ -183,7 +183,7 @@ modalClose.addEventListener(`click`, () => {
   modal.close();
 });
 
-// Styling and a
+// Styling and accessibility
 const style = document.createElement("style");
 style.innerHTML = `
   [tabindex]:focus-visible,
