@@ -94,9 +94,12 @@ async function showCalendar(year, month) {
   }
 
   calendarDiv.appendChild(table);
-  await displayCommemorativeDays(year, month + 1);
+
+  // Add labels and click events for commemorative days
+  await displayCommemorativeDays(year, month + 1); // month + 1 because it's 0-based in JS
 }
 
+// Add commemorative day labels and modal popup
 async function displayCommemorativeDays(year, month) {
   const days = await loadCommemorativeDays();
 
@@ -115,6 +118,7 @@ async function displayCommemorativeDays(year, month) {
 
     const cell = document.querySelector(`[data-date="${targetDate}"]`);
     if (cell) {
+      // Add line break before label
       cell.appendChild(document.createElement("br"));
 
       const label = document.createElement("span");
@@ -193,26 +197,7 @@ modalClose.addEventListener("click", () => {
   if (lastFocusedCell) lastFocusedCell.focus(); // 🔧
 });
 
-// 🔧 Trap focus inside modal
-modal.addEventListener("keydown", (e) => {
-  const focusable = modal.querySelectorAll(
-    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-  );
-  const first = focusable[0];
-  const last = focusable[focusable.length - 1];
-
-  if (e.key === "Tab") {
-    if (e.shiftKey && document.activeElement === first) {
-      e.preventDefault();
-      last.focus();
-    } else if (!e.shiftKey && document.activeElement === last) {
-      e.preventDefault();
-      first.focus();
-    }
-  }
-});
-
-// 🔧 Inject styles
+// Styling and accessibility
 const style = document.createElement("style");
 style.innerHTML = `
   [tabindex]:focus-visible,
