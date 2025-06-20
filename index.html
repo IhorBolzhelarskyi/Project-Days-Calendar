@@ -3,8 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <title>Days Calendar Project</title>
+
+  <!-- ✅ SEO and Accessibility Improvements -->
+  <meta name="description" content="A dynamic calendar that displays commemorative days with descriptions and accessibility support." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="http://localhost/" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <script type="module" src="web.mjs"></script>
+
   <style>
     button,
     select {
@@ -12,12 +19,14 @@
       min-width: 44px;
       margin: 4px;
     }
+
     [tabindex]:focus-visible,
     button:focus-visible,
     select:focus-visible {
       outline: 2px solid black;
       outline-offset: 2px;
     }
+
     .commemorative-label {
       font-size: 0.75em;
       color: #333;
@@ -53,20 +62,19 @@
       <!-- Calendar grid will be injected here -->
     </section>
 
-      <div id="event-description" hidden></div>
-    </main>
-
-    <!-- Accessible modal -->
-    <dialog 
-      id="descriptionModal" 
-      role="dialog" 
-      aria-modal="true"
-      aria-labelledby="modalTitle" 
-      aria-describedby="modalText">
-      <h2 id="modalTitle">Modal title</h2>
-      <p id="modalText">Modal text</p>
-      <button id="modalClose" aria-label="Close description modal">Close</button>
-    </dialog>
+    <div id="event-description" hidden></div>
   </main>
+
+  <!-- Accessible modal -->
+  <dialog 
+    id="descriptionModal" 
+    role="dialog" 
+    aria-modal="true"
+    aria-labelledby="modalTitle" 
+    aria-describedby="modalText">
+    <h2 id="modalTitle">Modal title</h2>
+    <p id="modalText">Modal text</p>
+    <button id="modalClose" aria-label="Close description modal">Close</button>
+  </dialog>
 </body>
 </html>
