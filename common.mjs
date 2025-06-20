@@ -8,43 +8,39 @@ export function getDateInAString(date) {
   return `${year}-${month}-${day}`;
 }
 
-// feature / calculate - commemorative - dates;
 /**
  * Calculates the actual date for rules like "2nd Tuesday of October"
  * @param {number} year - e.g. 2025
- * @param {object} rule - { month, weekday, occurrence } (1-based month, 0=Sunday)
+ * @param {object} rule - { month, weekday, occurrence, day }
  * @returns {string} date in "YYYY-MM-DD"
  */
 export function calculateCommemorativeDate(year, rule) {
   const { month, weekday, occurrence, day } = rule;
 
-  // If it's a fixed date (e.g., June 5), just return it
+  // Handle fixed-date rules (e.g., June 5)
   if (day !== undefined) {
-    const fixed = new Date(year, month - 1, day);
+    const fixed = new Date(Date.UTC(year, month - 1, day));
     return getDateInAString(fixed);
   }
 
-  // Find the first day of the month
-  const firstDay = new Date(year, month - 1, 1);
-  let date = 1;
-
-  // Count how many matching weekdays we pass
+  // Handle weekday-based rules (e.g., 2nd Tuesday of October)
   let count = 0;
 
-  while (true) {
-    const current = new Date(year, month - 1, date);
-    if (current.getMonth() !== month - 1) break; // next month
-    if (current.getDay() === weekday) {
+  for (let d = 1; d <= 31; d++) {
+    const current = new Date(Date.UTC(year, month - 1, d));
+    if (current.getUTCMonth() !== month - 1) break;
+
+    if (current.getUTCDay() === weekday) {
       count++;
       if (count === occurrence) {
         return getDateInAString(current);
       }
     }
-    date++;
   }
 
-  return null; // if not found
+  return null;
 }
+
 export async function loadCommemorativeDays() {
   const res = await fetch("days.json");
   if (!res.ok) {
@@ -53,6 +49,7 @@ export async function loadCommemorativeDays() {
   const data = await res.json();
   return data;
 }
+
 
 //  Fetches full text description from a given URL
 export async function fetchDescription(url) {
