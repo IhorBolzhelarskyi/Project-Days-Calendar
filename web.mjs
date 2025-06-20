@@ -118,7 +118,7 @@ async function displayCommemorativeDays(year, month) {
 
     const cell = document.querySelector(`[data-date="${targetDate}"]`);
     if (cell) {
-      // ✅ Add line break before label
+      // Add line break before label
       cell.appendChild(document.createElement("br"));
 
       // Create the commemorative label
@@ -183,7 +183,7 @@ modalClose.addEventListener(`click`, () => {
   modal.close();
 });
 
-// Styling and a
+// Styling and accesibility
 const style = document.createElement("style");
 style.innerHTML = `
   [tabindex]:focus-visible,
