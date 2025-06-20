@@ -86,7 +86,7 @@ async function showCalendar(year, month) {
       if ((day === 1 && i < start) || day > daysInMonth) {
         cell.textContent = "";
       } else {
-        const dateObj = new Date(year, month, day);
+        const dateObj = new Date(Date.UTC(year, month, day)); 
 
         const dateString = getDateInAString(dateObj); // Format: YYYY-MM-DD
 
