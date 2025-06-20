@@ -23,22 +23,25 @@ export function calculateCommemorativeDate(year, rule) {
     return getDateInAString(fixed);
   }
 
-  // Handle weekday-based rules (e.g., 2nd Tuesday of October)
-  let count = 0;
-
+  // Collect all matching weekdays in the month
+  const dates = [];
   for (let d = 1; d <= 31; d++) {
     const current = new Date(Date.UTC(year, month - 1, d));
     if (current.getUTCMonth() !== month - 1) break;
 
     if (current.getUTCDay() === weekday) {
-      count++;
-      if (count === occurrence) {
-        return getDateInAString(current);
-      }
+      dates.push(current);
     }
   }
 
-  return null;
+  if (occurrence === 5) {
+    // “last” means last in the list, not necessarily 5th
+    const last = dates[dates.length - 1];
+    return last ? getDateInAString(last) : null;
+  }
+
+  // Regular 1st, 2nd, 3rd, 4th
+  return dates[occurrence - 1] ? getDateInAString(dates[occurrence - 1]) : null;
 }
 
 export async function loadCommemorativeDays() {
